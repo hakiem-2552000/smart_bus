@@ -1,6 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:smart_bus/blocs/register_bloc.dart';
+import 'package:smart_bus/events/register_event.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/login_screen.dart';
+import 'package:smart_bus/states/register_state.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key key}) : super(key: key);
@@ -10,107 +18,280 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  RegisterBloc _registerBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _registerBloc = BlocProvider.of<RegisterBloc>(context);
+    _registerBloc.add(RegisterEventInitial());
+    // _registerBloc.add(RegisterEventInitial());
+    _emailController.addListener(() {
+      _registerBloc
+          .add(RegisterEventEmailChanged(email: _emailController.text));
+    });
+    _passwordController.addListener(() {
+      _registerBloc.add(
+          RegisterEventPasswordChanged(password: _passwordController.text));
+    });
+  }
+
+  bool isPopUpAlert = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
+        backgroundColor: Colors.white,
+        body: BlocBuilder<RegisterBloc, RegisterState>(
+          builder: (context, state) {
+            if (state.isFailure) {
+              print('Register failure');
+            } else if (state.isSubmitting) {
+              print('Register submitting');
+            } else if (state.isSuccess) {
+              print('Register success');
+            }
+            return Stack(
               children: [
-                Container(
-                  width: double.maxFinite,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'assets/images/bus.png',
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.maxFinite,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/bus.png',
+                                ),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Registration',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            height: 50,
+                            width: double.maxFinite,
+                            child: TextFormField(
+                              controller: _emailController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.email_outlined),
+                                hintText: 'Email',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: double.maxFinite,
+                            child: TextFormField(
+                              controller: _passwordController,
+                              focusNode: _passwordFocus,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock_outline),
+                                hintText: 'Password',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: double.maxFinite,
+                            child: TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock_outline),
+                                hintText: 'Confirm Password',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          state.isFailure
+                              ? Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'Email already exists',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              // register
+                              if (!state.isValidEmail ||
+                                  _emailController.text.isEmpty) {
+                                _buildAlert(
+                                    message: 'Invalid Email',
+                                    desc:
+                                        'A valid email address consists of an email prefix and an email domain, both in acceptable formats');
+                              } else if (!state.isValidPassword ||
+                                  _passwordController.text.isEmpty) {
+                                _buildAlert(
+                                    message: 'Invalid Password',
+                                    desc:
+                                        'A valid password must be at least 6 characters long');
+                              } else if (_passwordController.text !=
+                                  _confirmPasswordController.text) {
+                                _buildAlert(
+                                    message: 'Invalid Confirm Password',
+                                    desc:
+                                        'Confirm password must be the same password');
+                              } else {
+                                _registerBloc.add(
+                                  RegisterEventPressed(
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                  ),
+                                );
+                              }
+                            },
+                            child: _buildGradientButton(),
+                          ),
+                          _buildBreakLine(),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()));
+                            },
+                            child: _buildButton(),
+                          ),
+                        ],
                       ),
-                      fit: BoxFit.fitWidth,
                     ),
                   ),
                 ),
-                Text(
-                  'Register',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 50,
-                  width: double.maxFinite,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(FontAwesomeIcons.user),
-                      hintText: 'Name',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 50,
-                  width: double.maxFinite,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email_outlined),
-                      hintText: 'Email',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 50,
-                  width: double.maxFinite,
-                  child: TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock_outline),
-                      hintText: 'Password',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 50,
-                  width: double.maxFinite,
-                  child: TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock_outline),
-                      hintText: 'Confirm Password',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: _buildGradientButton(),
-                ),
-                _buildBreakLine(),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()));
-                  },
-                  child: _buildButton(),
-                ),
+                state.isSubmitting
+                    ? Container(
+                        width: double.maxFinite,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.black45,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : Container(),
+                state.isSuccess ? _buildRegisSuccess() : Container(),
               ],
-            ),
+            );
+          },
+        ));
+  }
+
+  _buildAlert({String message, String desc}) {
+    Alert(
+      context: context,
+      type: AlertType.error,
+      title: message,
+      desc: desc,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  _buildRegisSuccess() {
+    return Container(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height,
+      padding: EdgeInsets.all(20),
+      color: Colors.black45,
+      child: Center(
+        child: Container(
+          width: double.maxFinite,
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Icon(
+                FontAwesomeIcons.checkCircle,
+                color: Colors.green,
+                size: 50,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Sign up Success',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 200,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Align(
+                    child: Text(
+                      'Back to Log In',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

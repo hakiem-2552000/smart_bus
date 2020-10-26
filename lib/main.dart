@@ -1,13 +1,27 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_bus/blocs/login_bloc.dart';
+import 'package:smart_bus/blocs/register_bloc.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/error_screen.dart';
 import 'package:smart_bus/screen/home_screen.dart';
 import 'package:smart_bus/screen/loading_screen.dart';
 import 'package:smart_bus/screen/login_screen.dart';
 import 'package:smart_bus/screen/register_screen.dart';
 
+import 'blocs/simple_bloc_obsever.dart';
+
+final userRepository = UserRepository();
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = SimpleBlocObserver();
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider<RegisterBloc>(
+        create: (context) => RegisterBloc(userRepository: userRepository)),
+    BlocProvider<LoginBloc>(
+        create: (context) => LoginBloc(userRepository: userRepository)),
+  ], child: MyApp()));
 }
 
 class App extends StatelessWidget {
