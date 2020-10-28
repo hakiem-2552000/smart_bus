@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/events/login_event.dart';
+import 'package:smart_bus/navigation_bar.dart';
 import 'package:smart_bus/screen/home_screen.dart';
 import 'package:smart_bus/screen/register_screen.dart';
 import 'package:smart_bus/states/login_state.dart';
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
               print('Login success');
               // Navigator.of(context).pushReplacement(
               //     MaterialPageRoute(builder: (context) => HomeScreen()));
-              return HomeScreen();
+              return NavigationBar();
             }
             return Stack(
               children: [
@@ -96,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.maxFinite,
                             child: TextFormField(
                               controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.email),
                                 hintText: 'Email',

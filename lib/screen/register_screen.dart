@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:smart_bus/blocs/register_bloc.dart';
 import 'package:smart_bus/events/register_event.dart';
