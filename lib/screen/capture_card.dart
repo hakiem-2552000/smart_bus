@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:edge_detection/edge_detection.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -38,6 +39,22 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
     });
   }
 
+  Future readText() async {
+    print('oke');
+    FirebaseVisionImage ourImage =
+        FirebaseVisionImage.fromFile(File(_imagePath));
+    TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
+    VisionText readText = await recognizeText.processImage(ourImage);
+
+    for (TextBlock block in readText.blocks) {
+      for (TextLine line in block.lines) {
+        for (TextElement word in line.elements) {
+          print(word.text);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +66,11 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
             child: Image.file(new File(_imagePath)),
           ),
           Text('Path: ' + _imagePath),
+          FlatButton(
+              onPressed: () {
+                readText();
+              },
+              child: Text('Read text')),
         ],
       ),
     );
