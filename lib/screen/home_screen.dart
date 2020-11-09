@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/capture_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,8 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: FlatButton(
           onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CaptureCardScreen()));
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => CaptureCardScreen()));
+            addUser();
           },
           child: Text(
             "Add User",

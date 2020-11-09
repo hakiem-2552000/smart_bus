@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/history_screen.dart';
 import 'package:smart_bus/screen/home_screen.dart';
 import 'package:smart_bus/screen/profile_screen.dart';
 import 'package:smart_bus/screen/wallet_screen.dart';
 
 class NavigationBar extends StatefulWidget {
+  String email;
+  NavigationBar({Key key, this.email}) : super(key: key);
   @override
   _NavigationBarState createState() => _NavigationBarState();
 }
 
 class _NavigationBarState extends State<NavigationBar> {
+  bool _isExistedUser = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);

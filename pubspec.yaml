@@ -39,6 +39,7 @@ dependencies:
   edge_detection: ^1.0.5
   camera: ^0.5.8+11
   firebase_ml_vision: ^0.9.7
+  responsive_framework: ^0.0.8 
 
 
   # The following adds the Cupertino Icons font to your application.

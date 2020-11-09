@@ -6,7 +6,9 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:smart_bus/blocs/register_bloc.dart';
 import 'package:smart_bus/events/register_event.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
+import 'package:smart_bus/screen/capture_card.dart';
 import 'package:smart_bus/screen/login_screen.dart';
+import 'package:smart_bus/screen/user_add_new_screen.dart';
 import 'package:smart_bus/states/register_state.dart';
 
 class RegisterScreen extends StatefulWidget {

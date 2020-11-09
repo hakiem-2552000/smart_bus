@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
   UserRepository({FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   Future<void> signInWithEmailAndPassword(
       {String email, String password}) async {
     return await this._firebaseAuth.signInWithEmailAndPassword(
@@ -30,5 +33,19 @@ class UserRepository {
 
   Future<User> getUser() async {
     return this._firebaseAuth.currentUser;
+  }
+
+  Future<bool> isExistedUser({String email}) async {
+    bool isExisted = false;
+    await users.where('email', isEqualTo: email).get().then((value) {
+      if (value.size == 0) {
+        print('EMPTY');
+        isExisted = false;
+      } else {
+        print('Existed user');
+        isExisted = true;
+      }
+    });
+    return isExisted;
   }
 }
