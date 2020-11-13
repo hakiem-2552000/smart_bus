@@ -14,6 +14,7 @@ import 'package:smart_bus/blocs/auth_bloc.dart';
 
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/events/auth_event.dart';
+import 'package:smart_bus/events/login_event.dart';
 
 import 'package:smart_bus/screen/login_screen.dart';
 
@@ -32,11 +33,14 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
   String age = '';
   String code = '';
   CollectionReference users = FirebaseFirestore.instance.collection('users');
+  LoginBloc _loginBloc;
+  AuthenticationBloc _authenticationBloc;
 
   @override
   void initState() {
     super.initState();
-
+    _loginBloc = BlocProvider.of<LoginBloc>(context);
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     initPlatformState();
   }
 
@@ -56,13 +60,13 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
       _imagePath = imagePath;
     });
     readText();
-    readBarcode();
   }
 
   bool isNumeric(String s) {
     if (s == null) {
       return false;
     }
+    if (s.length <= 8) return false;
     return double.tryParse(s) != null;
   }
 
@@ -76,12 +80,21 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
       for (TextLine line in block.lines) {
         for (TextElement word in line.elements) {
           result += word.text + ' ';
-          if (result.contains('Họ tên')) {
+          if (result.contains('Họ tên') ||
+              result.contains('Ho tên') ||
+              result.contains('Ho ten') ||
+              result.contains('tên')) {
             name = result;
           }
           if (result.contains('Ngày sinh')) {
             age = result;
           }
+          if (isNumeric(result)) {
+            setState(() {
+              code = result;
+            });
+          }
+          print(result);
         }
 
         result = '';
@@ -105,7 +118,6 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
         age = newAge;
       });
     }
-    setState(() {});
   }
 
   Future readBarcode() async {
@@ -134,6 +146,8 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
         'code': code,
       }).then((value) {
         print("User Added");
+        _loginBloc.add(LoginEventStarted());
+        _authenticationBloc.add(AuthenticationEventStarted());
       }).catchError((error) => print("Failed to add user: $error"));
     } else {
       _buildAlert(message: 'Error', desc: 'Code is empty');

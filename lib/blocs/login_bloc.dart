@@ -15,7 +15,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent loginEvent) async* {
-    if (loginEvent is LoginEventEmailChange) {
+    if (loginEvent is LoginEventStarted) {
+      yield LoginState.initial();
+    } else if (loginEvent is LoginEventEmailChange) {
       yield state.cloneAndUpdate(
         isValidEmail: Validators.isValidEmail(loginEvent.email),
       );
