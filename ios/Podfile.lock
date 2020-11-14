@@ -333,6 +333,8 @@ PODS:
   - FirebaseMLVisionTextModel (0.21.0):
     - FirebaseMLVision (~> 0.21)
   - Flutter (1.0.0)
+  - flutter_barcode_scanner (1.0.1):
+    - Flutter
   - "geolocator (6.0.0+4)":
     - Flutter
   - GoogleAPIClientForREST/Core (1.5.1):
@@ -416,6 +418,8 @@ PODS:
   - nanopb/encode (1.30906.0)
   - PromisesObjC (1.2.11)
   - Protobuf (3.13.0)
+  - shared_preferences (0.0.1):
+    - Flutter
   - WeScan (1.7.0)
 
 DEPENDENCIES:
@@ -430,7 +434,9 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_ml_vision (from `.symlinks/plugins/firebase_ml_vision/ios`)
   - Flutter (from `Flutter`)
+  - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
   trunk:
@@ -478,8 +484,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_ml_vision/ios"
   Flutter:
     :path: Flutter
+  flutter_barcode_scanner:
+    :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
   geolocator:
     :path: ".symlinks/plugins/geolocator/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -504,6 +514,7 @@ SPEC CHECKSUMS:
   FirebaseMLVisionLabelModel: c6922e607cf4549b14981c80bf0d69eb51a2b547
   FirebaseMLVisionTextModel: e9f3cba0f31022ae9dd3d246aff9849075cacd98
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_barcode_scanner: 49cd22fac3304077a6c1672f63bee4a2572ffd85
   geolocator: 1ae40084cc6c1586ce5ad12cfc3fd38c64d05f2f
   GoogleAPIClientForREST: 4bb409633efcc2e1b3f945afe7e35039b5a61db2
   GoogleAppMeasurement: 966e88df9d19c15715137bb2ddaf52373f111436
@@ -517,8 +528,9 @@ SPEC CHECKSUMS:
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   WeScan: fed582f6c38014d529afb5aa9ffd1bad38fc72b7
 
-PODFILE CHECKSUM: 23a263ced28417a6f5fea727819d6906102d907f
+PODFILE CHECKSUM: 49e335886bbd816fc5fe93c37ba66bd7ffb1aa25
 
 COCOAPODS: 1.10.0

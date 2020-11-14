@@ -40,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
@@ -52,17 +53,22 @@ class _LoginScreenState extends State<LoginScreen> {
             _authenticationBloc
                 .add(AuthenticationEventLoggedIn(email: _emailController.text));
           }
-          return Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                child: SafeArea(
-                  child: SingleChildScrollView(
+          return InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {
+              WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+            },
+            child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: SafeArea(
                     child: Column(
                       children: [
                         Container(
                           width: double.maxFinite,
-                          height: 150,
+                          height: 250,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage(
@@ -177,18 +183,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              ),
-              state.isSubmitting
-                  ? Container(
-                      width: double.maxFinite,
-                      height: MediaQuery.of(context).size.height,
-                      color: Colors.black45,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : Container(),
-            ],
+                state.isSubmitting
+                    ? Container(
+                        width: double.maxFinite,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.black45,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           );
         },
       ),

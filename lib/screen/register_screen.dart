@@ -48,6 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (context, state) {
@@ -58,17 +59,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             } else if (state.isSuccess) {
               print('Register success');
             }
-            return Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
-                  child: SafeArea(
-                    child: SingleChildScrollView(
+            return InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+              },
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: SafeArea(
                       child: Column(
                         children: [
                           Container(
                             width: double.maxFinite,
-                            height: 150,
+                            height: 250,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage(
@@ -197,19 +203,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                ),
-                state.isSubmitting
-                    ? Container(
-                        width: double.maxFinite,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black45,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-                state.isSuccess ? _buildRegisSuccess() : Container(),
-              ],
+                  state.isSubmitting
+                      ? Container(
+                          width: double.maxFinite,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.black45,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Container(),
+                  state.isSuccess ? _buildRegisSuccess() : Container(),
+                ],
+              ),
             );
           },
         ));

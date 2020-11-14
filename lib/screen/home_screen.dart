@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_bus/blocs/auth_bloc.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
+import 'package:smart_bus/screen/barcode_scanner.dart';
 import 'package:smart_bus/screen/capture_card.dart';
+import 'package:smart_bus/states/auth_state.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,46 +15,35 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  Future<void> addUser() async {
-    // Call the user's CollectionReference to add a new user
-    // return users
-    //     .add({
-    //       'full_name': 'Ha Vu Son Kiem', // John Doe
-    //       'age': 22 // 42
-    //     })
-    //     .then((value) => print("User Added"))
-    //     .catchError((error) => print("Failed to add user: $error"));
-    // UserRepository().createUserWithEmailAndPassword(
-    //   email: 'sonkiema3@gmail.com',
-    //   password: 'hakiem123456@',
-    // );
-    // UserRepository().signOut();
-    // UserRepository().getUser().then((value) {
-    //   print(value.uid);
-    // });
-    // UserRepository().isSignIn().then((value) {
-    //   print(value.toString());
-    // });
-    // UserRepository().signInWithEmailAndPassword(
-    //     email: 'sonkiema3@gmail.com', password: 'hakiem123456@');
+  String _email = '';
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
+
+  void getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = await prefs.getString('email');
+    setState(() {
+      _email = email;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Center(
-        child: FlatButton(
-          onPressed: () {
-            // Navigator.of(context).push(
-            //     MaterialPageRoute(builder: (context) => CaptureCardScreen()));
-            addUser();
-          },
-          child: Text(
-            "Add User",
-          ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => BarcodeScanScreen()));
+              },
+              child: Text('Go'),
+            )
+          ],
         ),
       ),
     );

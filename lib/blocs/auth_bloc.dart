@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_bus/events/auth_event.dart';
 import 'package:smart_bus/main.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
@@ -28,6 +29,9 @@ class AuthenticationBloc
         _isExist = value;
       });
       if (_isExist) {
+        print(authenticationEvent.email);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', authenticationEvent.email);
         yield AuthenticationStateSuccess();
       } else {
         yield AuthenticationStateRegisterUser(email: authenticationEvent.email);
