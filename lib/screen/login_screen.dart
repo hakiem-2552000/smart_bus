@@ -40,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
@@ -59,141 +58,143 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () {
               WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
             },
-            child: Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.maxFinite,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                'assets/images/bus.png',
-                              ),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Log',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                            Text(
-                              'In',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(97, 67, 133, 1),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          height: 50,
-                          width: double.maxFinite,
-                          child: TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.email),
-                              hintText: 'Email',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          height: 50,
-                          width: double.maxFinite,
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock),
-                              hintText: 'Password',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        state.isFailure
-                            ? Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  'Email or password incorrect.',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                  ),
+            child: SingleChildScrollView(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: SafeArea(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.maxFinite,
+                            height: 250,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/bus.png',
                                 ),
-                              )
-                            : Container(),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            //login
-                            if (!state.isValidEmail ||
-                                _emailController.text.isEmpty) {
-                              _buildAlert(
-                                  message: 'Invalid Email',
-                                  desc:
-                                      'A valid email address consists of an email prefix and an email domain, both in acceptable formats');
-                            } else if (!state.isValidPassword ||
-                                _passwordController.text.isEmpty) {
-                              _buildAlert(
-                                  message: 'Invalid Password',
-                                  desc:
-                                      'A valid password must be at least 6 characters long');
-                            } else {
-                              _loginBloc.add(LoginEventPressed(
-                                  email: _emailController.text,
-                                  password: _passwordController.text));
-                            }
-                          },
-                          child: _buildGradientButton(),
-                        ),
-                        _buildBreakLine(),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RegisterScreen()));
-                          },
-                          child: _buildButton(),
-                        ),
-                      ],
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Log',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              Text(
+                                'In',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(97, 67, 133, 1),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            height: 50,
+                            width: double.maxFinite,
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.email),
+                                hintText: 'Email',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            height: 50,
+                            width: double.maxFinite,
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock),
+                                hintText: 'Password',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          state.isFailure
+                              ? Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'Email or password incorrect.',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              //login
+                              if (!state.isValidEmail ||
+                                  _emailController.text.isEmpty) {
+                                _buildAlert(
+                                    message: 'Invalid Email',
+                                    desc:
+                                        'A valid email address consists of an email prefix and an email domain, both in acceptable formats');
+                              } else if (!state.isValidPassword ||
+                                  _passwordController.text.isEmpty) {
+                                _buildAlert(
+                                    message: 'Invalid Password',
+                                    desc:
+                                        'A valid password must be at least 6 characters long');
+                              } else {
+                                _loginBloc.add(LoginEventPressed(
+                                    email: _emailController.text,
+                                    password: _passwordController.text));
+                              }
+                            },
+                            child: _buildGradientButton(),
+                          ),
+                          _buildBreakLine(),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterScreen()));
+                            },
+                            child: _buildButton(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                state.isSubmitting
-                    ? Container(
-                        width: double.maxFinite,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black45,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-              ],
+                  state.isSubmitting
+                      ? Container(
+                          width: double.maxFinite,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.black45,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
             ),
           );
         },

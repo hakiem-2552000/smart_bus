@@ -8,6 +8,7 @@ import 'package:smart_bus/blocs/auth_bloc.dart';
 
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/blocs/register_bloc.dart';
+import 'package:smart_bus/blocs/user_infor_bloc.dart';
 import 'package:smart_bus/navigation_bar.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/error_screen.dart';
@@ -38,6 +39,8 @@ void main() async {
         create: (context) => RegisterBloc(userRepository: userRepository)),
     BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(userRepository: userRepository)),
+    BlocProvider<UserInforBloc>(
+        create: (context) => UserInforBloc(userRepository: userRepository)),
   ], child: MyApp()));
 }
 

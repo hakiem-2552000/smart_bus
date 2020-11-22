@@ -15,6 +15,7 @@ import 'package:smart_bus/blocs/auth_bloc.dart';
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/events/auth_event.dart';
 import 'package:smart_bus/events/login_event.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 
 import 'package:smart_bus/screen/login_screen.dart';
 
@@ -86,7 +87,7 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
               result.contains('tên')) {
             name = result;
           }
-          if (result.contains('Ngày sinh')) {
+          if (result.contains('Ngày sinh') || result.contains('Ngay sinh')) {
             age = result;
           }
           if (isNumeric(result)) {
@@ -139,12 +140,14 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
 
   Future<void> addUser() async {
     if (code.isNotEmpty) {
-      return await users.add({
-        'full_name': name, // John Doe
-        'birth': age,
-        'email': widget.email,
-        'code': code,
-      }).then((value) {
+      return await UserRepository()
+          .updateUserData(
+        email: widget.email,
+        code: code,
+        name: name,
+        age: age,
+      )
+          .then((value) {
         print("User Added");
         _loginBloc.add(LoginEventStarted());
         _authenticationBloc.add(AuthenticationEventStarted());

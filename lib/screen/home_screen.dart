@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_bus/blocs/auth_bloc.dart';
+import 'package:smart_bus/main.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/barcode_scanner.dart';
 import 'package:smart_bus/screen/capture_card.dart';
@@ -20,6 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getEmail();
+    getUid();
+  }
+
+  void getUid() async {
+    userRepository.getUser().then((value) {
+      print(value.uid);
+    });
   }
 
   void getEmail() async {

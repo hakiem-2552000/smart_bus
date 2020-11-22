@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:smart_bus/models/user_infor_model.dart';
+import 'package:smart_bus/repositories/user_repository.dart';
 
 class BarcodeScanScreen extends StatefulWidget {
   @override
@@ -9,10 +11,20 @@ class BarcodeScanScreen extends StatefulWidget {
 
 class _BarcodeScanScreenState extends State<BarcodeScanScreen> {
   String _scanBarcode = 'Unknown';
+  UserInfor _userInfor = UserInfor(name: '', age: '', code: '', email: '');
 
   @override
   void initState() {
     super.initState();
+    fetchInfor();
+  }
+
+  void fetchInfor() async {
+    await UserRepository().fetchUserInfor().then((value) {
+      setState(() {
+        _userInfor = value;
+      });
+    });
   }
 
   startBarcodeScanStream() async {
@@ -86,7 +98,8 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen> {
                             onPressed: () => startBarcodeScanStream(),
                             child: Text("Start barcode scan stream")),
                         Text('Scan result : $_scanBarcode\n',
-                            style: TextStyle(fontSize: 20))
+                            style: TextStyle(fontSize: 20)),
+                        Text(_userInfor.code),
                       ]));
             })));
   }

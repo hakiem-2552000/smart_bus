@@ -48,7 +48,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (context, state) {
@@ -65,156 +64,158 @@ class _RegisterScreenState extends State<RegisterScreen> {
               onTap: () {
                 WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
               },
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: SafeArea(
-                      child: Column(
-                        children: [
-                          Container(
-                            width: double.maxFinite,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/bus.png',
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: SafeArea(
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.maxFinite,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    'assets/images/bus.png',
+                                  ),
+                                  fit: BoxFit.contain,
                                 ),
-                                fit: BoxFit.contain,
                               ),
                             ),
-                          ),
-                          Text(
-                            'Registration',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                            height: 50,
-                            width: double.maxFinite,
-                            child: TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.email_outlined),
-                                hintText: 'Email',
+                            Text(
+                              'Registration',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 50,
-                            width: double.maxFinite,
-                            child: TextFormField(
-                              controller: _passwordController,
-                              focusNode: _passwordFocus,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock_outline),
-                                hintText: 'Password',
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              height: 50,
+                              width: double.maxFinite,
+                              child: TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.email_outlined),
+                                  hintText: 'Email',
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 50,
-                            width: double.maxFinite,
-                            child: TextFormField(
-                              controller: _confirmPasswordController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock_outline),
-                                hintText: 'Confirm Password',
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 50,
+                              width: double.maxFinite,
+                              child: TextFormField(
+                                controller: _passwordController,
+                                focusNode: _passwordFocus,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.lock_outline),
+                                  hintText: 'Password',
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          state.isFailure
-                              ? Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Email already exists',
-                                    style: TextStyle(
-                                      color: Colors.red,
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 50,
+                              width: double.maxFinite,
+                              child: TextFormField(
+                                controller: _confirmPasswordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.lock_outline),
+                                  hintText: 'Confirm Password',
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            state.isFailure
+                                ? Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      'Email already exists',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(
-                            height: 40,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              // register
-                              if (!state.isValidEmail ||
-                                  _emailController.text.isEmpty) {
-                                _buildAlert(
-                                    message: 'Invalid Email',
-                                    desc:
-                                        'A valid email address consists of an email prefix and an email domain, both in acceptable formats');
-                              } else if (!state.isValidPassword ||
-                                  _passwordController.text.isEmpty) {
-                                _buildAlert(
-                                    message: 'Invalid Password',
-                                    desc:
-                                        'A valid password must be at least 6 characters long');
-                              } else if (_passwordController.text !=
-                                  _confirmPasswordController.text) {
-                                _buildAlert(
-                                    message: 'Invalid Confirm Password',
-                                    desc:
-                                        'Confirm password must be the same password');
-                              } else {
-                                _registerBloc.add(
-                                  RegisterEventPressed(
-                                    email: _emailController.text,
-                                    password: _passwordController.text,
-                                  ),
-                                );
-                              }
-                            },
-                            child: _buildGradientButton(),
-                          ),
-                          _buildBreakLine(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()));
-                            },
-                            child: _buildButton(),
-                          ),
-                        ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                // register
+                                if (!state.isValidEmail ||
+                                    _emailController.text.isEmpty) {
+                                  _buildAlert(
+                                      message: 'Invalid Email',
+                                      desc:
+                                          'A valid email address consists of an email prefix and an email domain, both in acceptable formats');
+                                } else if (!state.isValidPassword ||
+                                    _passwordController.text.isEmpty) {
+                                  _buildAlert(
+                                      message: 'Invalid Password',
+                                      desc:
+                                          'A valid password must be at least 6 characters long');
+                                } else if (_passwordController.text !=
+                                    _confirmPasswordController.text) {
+                                  _buildAlert(
+                                      message: 'Invalid Confirm Password',
+                                      desc:
+                                          'Confirm password must be the same password');
+                                } else {
+                                  _registerBloc.add(
+                                    RegisterEventPressed(
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: _buildGradientButton(),
+                            ),
+                            _buildBreakLine(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()));
+                              },
+                              child: _buildButton(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  state.isSubmitting
-                      ? Container(
-                          width: double.maxFinite,
-                          height: MediaQuery.of(context).size.height,
-                          color: Colors.black45,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : Container(),
-                  state.isSuccess ? _buildRegisSuccess() : Container(),
-                ],
+                    state.isSubmitting
+                        ? Container(
+                            width: double.maxFinite,
+                            height: MediaQuery.of(context).size.height,
+                            color: Colors.black45,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Container(),
+                    state.isSuccess ? _buildRegisSuccess() : Container(),
+                  ],
+                ),
               ),
             );
           },

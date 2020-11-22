@@ -42,6 +42,9 @@ dependencies:
   responsive_framework: ^0.0.8 
   shared_preferences: ^0.5.12+4
   flutter_barcode_scanner: ^1.0.1
+  flutter_svg: ^0.19.1
+  awesome_card: ^1.1.0
+  dotted_border: ^1.0.6
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -66,6 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/icons/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
