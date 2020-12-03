@@ -22,22 +22,37 @@ class AuthenticationBloc
       yield AuthenticationStateInitial();
     } else if (authenticationEvent is AuthenticationEventLoggedIn) {
       yield AuthenticationLoading();
-      bool _isExist = false;
+      bool _isDriver = false;
       await _userRepository
-          .isExistedUser(email: authenticationEvent.email)
+          .isExistedDriver(email: authenticationEvent.email)
           .then((value) {
-        _isExist = value;
+        _isDriver = value;
       });
-      if (_isExist) {
+      if (_isDriver) {
         print(authenticationEvent.email);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', authenticationEvent.email);
-        yield AuthenticationStateSuccess();
+        yield AuthenticationStateIsDriver();
       } else {
-        yield AuthenticationStateRegisterUser(email: authenticationEvent.email);
+        bool _isExist = false;
+        await _userRepository
+            .isExistedUser(email: authenticationEvent.email)
+            .then((value) {
+          _isExist = value;
+        });
+        if (_isExist) {
+          print(authenticationEvent.email);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', authenticationEvent.email);
+          yield AuthenticationStateSuccess();
+        } else {
+          yield AuthenticationStateRegisterUser(
+              email: authenticationEvent.email);
+        }
       }
     } else if (authenticationEvent is AuthenticationEventLoggedOut) {
-      yield AuthenticationStateFailure();
+      _userRepository.signOut();
+      yield AuthenticationStateLoggedOut();
     }
   }
 }

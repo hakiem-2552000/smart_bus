@@ -4,27 +4,28 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_bus/blocs/coin_bloc.dart';
 import 'package:smart_bus/events/coin_event.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
-import 'package:smart_bus/screen/component/amount_coin.dart';
 
-class RechargeScreen extends StatefulWidget {
+import 'component/amount_coin.dart';
+
+class WithdrawScreen extends StatefulWidget {
   @override
-  _RechargeScreenState createState() => _RechargeScreenState();
+  _WithdrawScreenState createState() => _WithdrawScreenState();
 }
 
-class _RechargeScreenState extends State<RechargeScreen> {
+class _WithdrawScreenState extends State<WithdrawScreen> {
   final TextEditingController _editingController = TextEditingController();
 
   _updateAmount() async {
     print('update');
     double _currrentAmount;
-    double _rechargeAmount = double.parse(_editingController.text);
+    double _withdrawAmount = double.parse(_editingController.text);
     await UserRepository().getCoin().then((value) {
       print(value.toString());
       _currrentAmount = double.parse(value);
     }).catchError((e) {
       print(e);
     });
-    double balance = _currrentAmount + _rechargeAmount;
+    double balance = _currrentAmount - _withdrawAmount;
     await UserRepository().updateCoin(amount: balance.toString());
     BlocProvider.of<CoinBloc>(context).add(CoinEventGetAmount());
     _editingController.text = '';
@@ -38,7 +39,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'Recharge',
+          'Withdraw',
           style: TextStyle(
             color: Colors.black,
           ),
@@ -89,13 +90,14 @@ class _RechargeScreenState extends State<RechargeScreen> {
                 padding: const EdgeInsets.all(20),
                 child: TextFormField(
                   controller: _editingController,
+                  maxLength: 11,
                   keyboardType: TextInputType.phone,
                   onChanged: (text) {},
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     counterText: "",
                     filled: true,
-                    hintText: 'Recharge',
+                    hintText: 'Withdraw',
                     hintStyle: TextStyle(fontSize: 15),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -135,7 +137,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
                         ),
                         child: Align(
                           child: Text(
-                            'Recharge',
+                            'Withdraw',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,

@@ -8,6 +8,7 @@ import 'package:smart_bus/repositories/user_repository.dart';
 import 'package:smart_bus/screen/component/amount_coin.dart';
 import 'package:smart_bus/screen/credit_card_screen.dart';
 import 'package:smart_bus/screen/recharge_screen.dart';
+import 'package:smart_bus/screen/withdraw_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   @override
@@ -69,33 +70,67 @@ class _WalletScreenState extends State<WalletScreen> {
             children: [
               Row(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 20),
-                        width: 40,
-                        height: 40,
-                        child: SvgPicture.asset('assets/icons/coin-2.svg'),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      UserCoin(),
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    width: 40,
+                    height: 40,
+                    child: SvgPicture.asset('assets/icons/coin-2.svg'),
                   ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => RechargeScreen()));
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                  SizedBox(
+                    width: 10,
+                  ),
+                  UserCoin(),
+                ],
+              ),
+              DottedBorder(
+                radius: Radius.circular(10),
+                padding: EdgeInsets.all(8),
+                color: Colors.grey,
+                child: Container(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            width: 35,
-                            height: 35,
-                            child: SvgPicture.asset('assets/icons/wallet.svg'),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => WithdrawScreen()));
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              child:
+                                  SvgPicture.asset('assets/icons/withdraw.svg'),
+                            ),
+                          ),
+                          Text(
+                            'Withdraw',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ],
+                      )),
+                      Expanded(
+                          child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => RechargeScreen()));
+                            },
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              child:
+                                  SvgPicture.asset('assets/icons/wallet.svg'),
+                            ),
                           ),
                           Text(
                             'Recharge',
@@ -106,16 +141,13 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
+                      )),
+                    ],
                   ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                ],
+                ),
               ),
               SizedBox(
-                height: 20,
+                height: 30,
               ),
               CreditCard(
                 cardNumber: cardNumber,

@@ -20,3 +20,7 @@ class AuthenticationStateRegisterUser extends AuthenticationState {
 }
 
 class AuthenticationLoading extends AuthenticationState {}
+
+class AuthenticationStateLoggedOut extends AuthenticationState {}
+
+class AuthenticationStateIsDriver extends AuthenticationState {}

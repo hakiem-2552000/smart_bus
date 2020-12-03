@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_bus/models/bank_model.dart';
+import 'package:smart_bus/models/bus_model.dart';
+import 'package:smart_bus/models/customer_model.dart';
+import 'package:smart_bus/models/trip_history_model.dart';
 import 'package:smart_bus/models/user_infor_model.dart';
 
 class UserRepository {
@@ -13,6 +16,14 @@ class UserRepository {
       FirebaseFirestore.instance.collection('coins');
   CollectionReference bankCollection =
       FirebaseFirestore.instance.collection('bank');
+  CollectionReference driverCollection =
+      FirebaseFirestore.instance.collection('drivers');
+  CollectionReference busCollection =
+      FirebaseFirestore.instance.collection('active');
+  CollectionReference tripHistoryCollection =
+      FirebaseFirestore.instance.collection('trip_history');
+  CollectionReference usersTripCollection =
+      FirebaseFirestore.instance.collection('users_trip');
 
   Future<void> signInWithEmailAndPassword(
       {String email, String password}) async {
@@ -80,7 +91,7 @@ class UserRepository {
     });
   }
 
-  Future<void> updateCoin({int amount}) async {
+  Future<void> updateCoin({String amount}) async {
     return await coinCollection
         .doc(this._firebaseAuth.currentUser.uid)
         .set({'amount': amount});
@@ -95,7 +106,7 @@ class UserRepository {
   Future<String> getCoin() async {
     DocumentSnapshot snapshot =
         await coinCollection.doc(this._firebaseAuth.currentUser.uid).get();
-    return snapshot.data()['amount'] ?? '0';
+    return snapshot.data()['amount'].toString() ?? '0';
   }
 
   Future<bool> isExistBank() async {
@@ -137,5 +148,79 @@ class UserRepository {
       email: snapshot.data()['email'] ?? '',
       age: snapshot.data()['birth'] ?? '',
     );
+  }
+
+  Future<bool> isExistedDriver({String email}) async {
+    DocumentSnapshot snapshot =
+        await driverCollection.doc(this._firebaseAuth.currentUser.uid).get();
+    return snapshot.exists;
+  }
+
+  Future<Customer> getCustomerByCode({String code}) async {
+    QuerySnapshot snapshot =
+        await userCollection.where('code', isEqualTo: code).get();
+    return Customer(
+      name: snapshot.docs[0].data()['full_name'] ?? '',
+      code: snapshot.docs[0].data()['code'] ?? '',
+      email: snapshot.docs[0].data()['email'] ?? '',
+      age: snapshot.docs[0].data()['birth'] ?? '',
+      uid: snapshot.docs[0].id,
+    );
+  }
+
+  Future<String> getBusId() async {
+    DocumentSnapshot snapshot =
+        await driverCollection.doc(this._firebaseAuth.currentUser.uid).get();
+    return snapshot.data()['busId'];
+  }
+
+  Future<Bus> getBus({String busId}) async {
+    DocumentSnapshot snapshot = await busCollection.doc(busId).get();
+    return Bus(
+      busId: snapshot.id,
+      busName: snapshot.data()['busName'] ?? '',
+      currentPosition: snapshot.data()['currentPosition'] ?? '',
+      lsUser: List<String>.from(snapshot.data()['lsUser'] ?? []),
+      lsStreet: List<String>.from(snapshot.data()['lsStreet'] ?? []),
+    );
+  }
+
+  // them trip history va tra ve id cua doc
+  Future<String> addTripHistory({TripHistory tripHistory}) async {
+    String idTrip;
+    await tripHistoryCollection.add({
+      'busId': tripHistory.busId,
+      'startIndex': tripHistory.startIndex,
+      'endIndex': tripHistory.endIndex,
+      'userId': tripHistory.userId,
+      'isDone': tripHistory.isDone,
+    }).then((value) {
+      idTrip = value.id;
+    });
+    return idTrip;
+  }
+
+  Future<void> updateUserTrip(
+      {String currentTripId, bool isOnBus, String userId}) async {
+    return await usersTripCollection.doc(userId).set({
+      'currentTripId': currentTripId,
+      'isOnBus': isOnBus,
+    });
+  }
+
+  Future<void> updateBusLsUser({String busId, List<String> lsUser}) async {
+    return await busCollection.doc(busId).update({'lsUser': lsUser});
+  }
+
+  Future<String> getCurrentTripID({String userId}) async {
+    DocumentSnapshot snapshot = await usersTripCollection.doc(userId).get();
+    return snapshot.data()['currentTripId'] ?? '';
+  }
+
+  Future<void> updateTripHistory({String idTH, int endIndex}) async {
+    return await tripHistoryCollection.doc(idTH).update({
+      'endIndex': endIndex,
+      'isDone': true,
+    });
   }
 }

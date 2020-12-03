@@ -142,10 +142,10 @@ class _CaptureCardScreenState extends State<CaptureCardScreen> {
     if (code.isNotEmpty) {
       return await UserRepository()
           .updateUserData(
-        email: widget.email,
-        code: code,
-        name: name,
-        age: age,
+        email: widget.email.trim(),
+        code: code.trim(),
+        name: name.trim(),
+        age: age.trim(),
       )
           .then((value) {
         print("User Added");

@@ -4,13 +4,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:smart_bus/blocs/active_bloc.dart';
 import 'package:smart_bus/blocs/auth_bloc.dart';
+import 'package:smart_bus/blocs/bus_bloc.dart';
+import 'package:smart_bus/blocs/coin_bloc.dart';
+import 'package:smart_bus/blocs/customer_bloc.dart';
 
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/blocs/register_bloc.dart';
 import 'package:smart_bus/blocs/user_infor_bloc.dart';
+import 'package:smart_bus/events/bus_event.dart';
+import 'package:smart_bus/events/coin_event.dart';
+import 'package:smart_bus/events/user_infor_event.dart';
 import 'package:smart_bus/navigation_bar.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
+import 'package:smart_bus/screen/driver_screen.dart';
 import 'package:smart_bus/screen/error_screen.dart';
 import 'package:smart_bus/screen/home_screen.dart';
 import 'package:smart_bus/screen/loading_screen.dart';
@@ -41,6 +49,14 @@ void main() async {
         create: (context) => LoginBloc(userRepository: userRepository)),
     BlocProvider<UserInforBloc>(
         create: (context) => UserInforBloc(userRepository: userRepository)),
+    BlocProvider<CoinBloc>(
+        create: (context) => CoinBloc(userRepository: userRepository)),
+    BlocProvider<CustomerBloc>(
+        create: (context) => CustomerBloc(userRepository: userRepository)),
+    BlocProvider<BusBloc>(
+        create: (context) => BusBloc(userRepository: userRepository)),
+    BlocProvider<ActiveBloc>(
+        create: (context) => ActiveBloc(userRepository: userRepository)),
   ], child: MyApp()));
 }
 
@@ -68,6 +84,10 @@ class _MyAppState extends State<MyApp> {
                       child: child,
                       listener: (context, authenticationState) async {
                         if (authenticationState is AuthenticationStateSuccess) {
+                          BlocProvider.of<UserInforBloc>(context)
+                              .add(UserInforEventFetch());
+                          BlocProvider.of<CoinBloc>(context)
+                              .add(CoinEventGetAmount());
                           _navigator.pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => NavigationBar(),
@@ -94,6 +114,22 @@ class _MyAppState extends State<MyApp> {
                                 builder: (context) => UserAddNewScreen(
                                   email: authenticationState.email,
                                 ),
+                              ),
+                              (route) => false);
+                        } else if (authenticationState
+                            is AuthenticationStateLoggedOut) {
+                          _navigator.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                              (route) => false);
+                        } else if (authenticationState
+                            is AuthenticationStateIsDriver) {
+                          BlocProvider.of<BusBloc>(context)
+                              .add(BusEventRequest());
+                          _navigator.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => DriverScreen(),
                               ),
                               (route) => false);
                         }
