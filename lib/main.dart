@@ -8,13 +8,19 @@ import 'package:smart_bus/blocs/active_bloc.dart';
 import 'package:smart_bus/blocs/auth_bloc.dart';
 import 'package:smart_bus/blocs/bus_bloc.dart';
 import 'package:smart_bus/blocs/coin_bloc.dart';
+import 'package:smart_bus/blocs/current_bloc.dart';
 import 'package:smart_bus/blocs/customer_bloc.dart';
+import 'package:smart_bus/blocs/dashboard_bloc.dart';
+import 'package:smart_bus/blocs/history_bloc.dart';
 
 import 'package:smart_bus/blocs/login_bloc.dart';
 import 'package:smart_bus/blocs/register_bloc.dart';
 import 'package:smart_bus/blocs/user_infor_bloc.dart';
 import 'package:smart_bus/events/bus_event.dart';
 import 'package:smart_bus/events/coin_event.dart';
+import 'package:smart_bus/events/current_event.dart';
+import 'package:smart_bus/events/dashboard_event.dart';
+import 'package:smart_bus/events/history_event.dart';
 import 'package:smart_bus/events/user_infor_event.dart';
 import 'package:smart_bus/navigation_bar.dart';
 import 'package:smart_bus/repositories/user_repository.dart';
@@ -57,6 +63,12 @@ void main() async {
         create: (context) => BusBloc(userRepository: userRepository)),
     BlocProvider<ActiveBloc>(
         create: (context) => ActiveBloc(userRepository: userRepository)),
+    BlocProvider<DashboardBloc>(
+        create: (context) => DashboardBloc(userRepository: userRepository)),
+    BlocProvider<HistoryBloc>(
+        create: (context) => HistoryBloc(userRepository: userRepository)),
+    BlocProvider<CurrentBloc>(
+        create: (context) => CurrentBloc(userRepository: userRepository)),
   ], child: MyApp()));
 }
 
@@ -84,10 +96,16 @@ class _MyAppState extends State<MyApp> {
                       child: child,
                       listener: (context, authenticationState) async {
                         if (authenticationState is AuthenticationStateSuccess) {
+                          BlocProvider.of<DashboardBloc>(context)
+                              .add(DashboardEventRequest());
                           BlocProvider.of<UserInforBloc>(context)
                               .add(UserInforEventFetch());
                           BlocProvider.of<CoinBloc>(context)
                               .add(CoinEventGetAmount());
+                          BlocProvider.of<HistoryBloc>(context)
+                              .add(HistoryEventRequest());
+                          BlocProvider.of<CurrentBloc>(context)
+                              .add(CurrentEventRequest());
                           _navigator.pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => NavigationBar(),

@@ -8,3 +8,8 @@ abstract class BusEvent extends Equatable {
 }
 
 class BusEventRequest extends BusEvent {}
+
+class BusEventUpdateStop extends BusEvent {
+  final int position;
+  BusEventUpdateStop({@required this.position});
+}

@@ -62,6 +62,18 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/logo.png'),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),

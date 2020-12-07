@@ -49,6 +49,12 @@ class _BarcodeResultScreenState extends State<BarcodeResultScreen> {
           } else if (activeState is ActiveStateCheckInFailure) {
             _buildError(message: 'The user has checked in');
           }
+          if (activeState is ActiveStateCheckOutSuccess) {
+            _busBloc.add(BusEventRequest());
+            _buildAlert(message: 'Check out successfull');
+          } else if (activeState is ActiveStateCheckOutFailure) {
+            _buildError(message: 'The user hasn\'t checked in');
+          }
         },
         child: Scaffold(
           backgroundColor: Colors.white,
@@ -198,6 +204,12 @@ class _BarcodeResultScreenState extends State<BarcodeResultScreen> {
                                 ),
                               ),
                             );
+                            // UserRepository()
+                            //     .getListUserHistory(
+                            //         userID: 'ICgAyys5jddcGeCqpkWmdVhxUOE3')
+                            //     .then((value) {
+                            //   print(value.toString());
+                            // });
                           },
                           child: Container(
                             height: 55,

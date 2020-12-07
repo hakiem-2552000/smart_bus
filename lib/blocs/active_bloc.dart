@@ -33,6 +33,10 @@ class ActiveBloc extends Bloc<ActiveEvent, ActiveState> {
           currentBus.lsUser.indexOf(event.tripHistory.userId) != -1) {
         yield ActiveStateCheckInFailure();
       } else {
+        await _userRepository.updateCost(
+          userID: event.tripHistory.userId,
+          cost: 0,
+        );
         List<String> lsUpdate = currentBus.lsUser;
         lsUpdate.add(event.tripHistory.userId);
         try {
@@ -75,13 +79,29 @@ class ActiveBloc extends Bloc<ActiveEvent, ActiveState> {
           currentBus = value;
         });
       } catch (e) {
-        print(e);
         yield ActiveStateCheckOutFailure();
       }
-      if (currentBus.lsUser == null &&
+      if (currentBus.lsUser == null ||
           currentBus.lsUser.indexOf(event.tripHistory.userId) == -1) {
         yield ActiveStateCheckOutFailure();
       } else {
+        // tru tien
+        double amount;
+        int _cost;
+        await _userRepository
+            .getCoinCustomer(uid: event.tripHistory.userId)
+            .then((coin) async {
+          await _userRepository
+              .getCost(userID: event.tripHistory.userId)
+              .then((cost) {
+            _cost = cost;
+            amount = coin - cost;
+          });
+        });
+
+        await _userRepository.updateCoinCustomer(
+            uid: event.tripHistory.userId, amount: amount.toString());
+
         List<String> lsUpdate = currentBus.lsUser;
         lsUpdate.remove(event.tripHistory.userId);
         try {
@@ -91,7 +111,6 @@ class ActiveBloc extends Bloc<ActiveEvent, ActiveState> {
           yield ActiveStateCheckOutFailure();
         }
 
-        // update user-trip
         String tripHisID;
         try {
           await _userRepository
@@ -102,8 +121,13 @@ class ActiveBloc extends Bloc<ActiveEvent, ActiveState> {
         } catch (e) {
           yield ActiveStateCheckOutFailure();
         }
+        await _userRepository.updateTotalCost(
+          tripID: tripHisID,
+          cost: _cost,
+        );
+
         try {
-          _userRepository.updateUserTrip(
+          await _userRepository.updateUserTrip(
               userId: event.tripHistory.userId,
               currentTripId: 'null',
               isOnBus: false);
@@ -111,13 +135,26 @@ class ActiveBloc extends Bloc<ActiveEvent, ActiveState> {
           yield ActiveStateCheckOutFailure();
         }
         try {
-          _userRepository.updateTripHistory(
+          await _userRepository.updateTripHistory(
             idTH: tripHisID,
             endIndex: event.tripHistory.endIndex,
           );
         } catch (e) {
           yield ActiveStateCheckOutFailure();
         }
+
+        List<String> lsUpdateHistory = List<String>();
+        await _userRepository
+            .getListUserHistory(userID: event.tripHistory.userId)
+            .then((value) {
+          if (value.isNotEmpty) {
+            lsUpdateHistory = value;
+          }
+        });
+        lsUpdateHistory.add(tripHisID);
+
+        await _userRepository.addUserHistoy(
+            userID: event.tripHistory.userId, lsUpdate: lsUpdateHistory);
         yield ActiveStateCheckOutSuccess();
       }
     }
